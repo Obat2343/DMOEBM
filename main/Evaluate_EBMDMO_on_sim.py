@@ -81,7 +81,6 @@ from pycode.misc import calculate_dtw_pos, calculate_dtw_angle, output2action, c
 from pycode.model.Motion_Gen import VAE, Single_Class_TransformerVAE
 
 ### SET CONFIG ###
-dataset_name = "RLBench-test"
 mode = "val"
 max_index = args.num_seq
 max_try = args.max_try
@@ -142,7 +141,7 @@ for task_index, task_name in enumerate(args.tasks):
     print(task_name)
     # my_task = 'PickUpCup' # 'ScoopWithSpatula','ReachTarget','TakePlateOffColoredDishRack','StackWine','CloseBox','PushButton','PutKnifeOnChoppingBoard','PutRubbishInBin','PickUpCup','OpenWineBottle', 'OpenGrill', 'OpenJar', 'CloseJar', 'WipeDesk','TakePlateOffColoredDishRack', 'PutUmbrellaInUmbrellaStand'
 
-    dataset_path = f"../dataset/{dataset_name}/{mode}/{task_name}"
+    dataset_path = f"{cfg.DATASET.RLBENCH.PATH}/{mode}/{task_name}"
     print(f"dataset path:{dataset_path}")
 
     current_task = task_name
@@ -151,19 +150,18 @@ for task_index, task_name in enumerate(args.tasks):
     exec_code = 'task = {}'.format(current_task)
     exec(exec_code)
 
+    temp_path = cfg.DATASET.RLBENCH.PATH
+
     # set up task
     task = env.get_task(task)
     descriptions, obs = task.reset()
 
     cfg.merge_from_file(EBM_config_path)
-
-    dataset_name = "RLBench-test"
-    cfg.DATASET.RLBENCH.PATH = os.path.abspath(f'../dataset/{dataset_name}')
+    cfg.DATASET.RLBENCH.PATH = temp_path
     cfg.DATASET.RLBENCH.TASK_NAME = task_name
     val_dataset = RLBench_DMOEBM(mode, cfg, save_dataset=False, num_frame=frame, rot_mode=rot_mode)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=8)
 
-    cfg.DATASET.RLBENCH.PATH = os.path.abspath('../dataset/RLBench4')
     train_dataset  = RLBench_DMOEBM("train", cfg, save_dataset=False, num_frame=frame, rot_mode=rot_mode)
     temp_loader = torch.utils.data.DataLoader(train_dataset, batch_size=len(train_dataset), shuffle=False, num_workers=8)
     for data in temp_loader:
@@ -173,6 +171,8 @@ for task_index, task_name in enumerate(args.tasks):
 
     # get EBM model
     cfg.merge_from_file(EBM_config_path)
+    cfg.DATASET.RLBENCH.PATH = temp_path
+
     conv_dims = cfg.MODEL.CONV_DIMS
     enc_depths = cfg.MODEL.ENC_DEPTHS
     enc_layers = cfg.MODEL.ENC_LAYERS

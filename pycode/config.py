@@ -26,7 +26,7 @@ _C.DATASET.IMAGE_SIZE = 256
 ### RLBENCH ###
 _C.DATASET.RLBENCH = CN()
 _C.DATASET.RLBENCH.TASK_NAME = 'PickUpCup' # e.g. 'CloseJar', 'PickUpCup'
-_C.DATASET.RLBENCH.PATH = os.path.abspath('../dataset/RLBench-Local') # '../dataset/RLBench-Local'
+_C.DATASET.RLBENCH.PATH = os.path.abspath('../dataset/RLBench-panda') # '../dataset/RLBench-Local'
 _C.DATASET.RLBENCH.SEQ_LEN = 1000
 _C.DATASET.RLBENCH.QUERY_LIST = ["uv", "time", "rotation_quat", "grasp", "z"]
 _C.DATASET.RLBENCH.QUERY_DIMS = [2, 1, 4, 1, 1]

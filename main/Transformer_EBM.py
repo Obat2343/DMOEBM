@@ -25,7 +25,6 @@ parser = argparse.ArgumentParser(description='parser for image generator')
 parser.add_argument('--config_file', type=str, default='../config/Transformer_EBM.yaml', metavar='FILE', help='path to config file')
 parser.add_argument('--name', type=str, default="")
 parser.add_argument('--add_name', type=str, default="")
-parser.add_argument('--log2wandb', type=str2bool, default=True)
 parser.add_argument('--save_data', type=str2bool, default=True)
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--reset_dataset', type=str2bool, default=False)
@@ -56,8 +55,7 @@ base_yamlname = os.path.basename(args.config_file)
 head, ext = os.path.splitext(args.config_file)
 dt_now = datetime.datetime.now()
 temp_yaml_path = f"{head}_{dt_now.year}{dt_now.month}{dt_now.day}_{dt_now.hour}:{dt_now.minute}:{dt_now.second}{ext}"
-if args.log2wandb:
-    shutil.copy(os.path.abspath(args.config_file), temp_yaml_path)
+shutil.copy(os.path.abspath(args.config_file), temp_yaml_path)
 
 for task_name in task_list:
     cfg.DATASET.RLBENCH.TASK_NAME = task_name
@@ -112,11 +110,6 @@ for task_name in task_list:
     else:
         raise ValueError("TODO")
 
-    if args.log2wandb:
-        wandb.login()
-        run = wandb.init(project='IBC-{}-{}'.format(cfg.DATASET.NAME, cfg.DATASET.RLBENCH.TASK_NAME), entity='tendon',
-                        config=obj, save_code=True, name=dir_name, dir=save_dir)
-
     model_save_dir = os.path.join(save_path, "model")
     log_dir = os.path.join(save_path, 'log')
     vis_dir = os.path.join(save_path, 'vis')
@@ -125,7 +118,7 @@ for task_name in task_list:
 
     # copy source code
     shutil.copy(sys.argv[0], save_path)
-    if (len(args.config_file) > 0) and args.log2wandb:
+    if (len(args.config_file) > 0):
         shutil.copy(temp_yaml_path, os.path.join(save_path, base_yamlname))
 
     # save args
@@ -240,10 +233,6 @@ for task_name in task_list:
                 end = time.time()
                 cost = (end - start) / (iteration+1)
                 print(f'Train Iter: {iteration} Cost: {cost:.4g} Loss: {loss_dict["train/loss"]:.4g}')
-                
-                if args.log2wandb:
-                    wandb.log(loss_dict, step=iteration)
-                    wandb.log({"lr": optimizer.param_groups[0]['lr']}, step=iteration)
 
             if iteration % eval_iter == 0:
                 # save negative sample exaple
@@ -295,10 +284,6 @@ for task_name in task_list:
                     vis_img = visualize_inf_query(5, 16, sample, gt_query, image, train_dataset.info_dict["data_list"][0]["camera_intrinsic"], rot_mode, pred_score=query_pred_dict["score"], gt_score=gt_pred_dict["score"])
                     if args.save_data:
                         vis_img.save(os.path.join(vis_dir, f"pos_img_val_{iteration}.png"))
-
-                    if args.log2wandb:
-                        wandb.log(score_loss_dict, step=iteration)
-                        wandb.log(error_loss_dict, step=iteration)
 
                 model.train()
 

@@ -1,4 +1,6 @@
-/git/*
-/dataset/*
+git/*
+dataset/*
+config/*
 env/*
+result/*
 !requirements.txt

@@ -22,9 +22,9 @@ parser = argparse.ArgumentParser(description='parser for image generator')
 parser.add_argument('--mode_list', nargs="*", type=str, default=["train", "val"]) # ["train", "val"]
 parser.add_argument('--num_data', nargs="*", type=int, default=[1000, 100])
 parser.add_argument('--start_index', type=int, default=0)
-parser.add_argument('--task_list', nargs="*", type=str) # PickUpCup PutRubbishInBin StackWine CloseBox PushButton ReachTarget TakePlateOffColoredDishRack PutKnifeOnChoppingBoard StackBlocks
+parser.add_argument('--task_list', nargs="*", type=str) # e.g., PickUpCup PutRubbishInBin. See RLBench to check the list of tasks
 parser.add_argument('--robot', type=str, default="panda")
-parser.add_argument('--server_path', type=str, default="tendon@dl20:/misc/dl001/dataset/ooba") # if server_path == "", dataset is not copied to server 
+parser.add_argument('--server_path', type=str, default="") # if server_path == "", dataset is not copied to server 
 parser.add_argument('--dataset_name', type=str, default="")
 parser.add_argument('--dataset_base_dir', type=str, default="../dataset")
 args = parser.parse_args()
@@ -37,7 +37,7 @@ robot = args.robot # panda, ur5
 server_path = args.server_path
 
 if args.dataset_name == "":
-    dataset_name = "RLBench4-{}".format(robot)
+    dataset_name = "RLBench-{}".format(robot)
 else:
     dataset_name = args.dataset_name
 

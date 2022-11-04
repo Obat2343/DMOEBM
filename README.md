@@ -37,6 +37,16 @@ python create_dataset.py --task_list TaskA TaskB
 ```
 
 ***
+## Download Pre-trained weights
+
+```sh
+mkdir result
+cd result
+```
+
+Please download and unzip the file from https://drive.google.com/file/d/1ECP7Vsz7HkC7dbgYmnI7gG1zVZAlwaXM/view?usp=share_link
+
+***
 ## Test
 
 ```sh

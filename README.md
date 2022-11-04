@@ -50,5 +50,5 @@ Please download and unzip the file from https://drive.google.com/file/d/1ECP7Vsz
 ## Test
 
 ```sh
-python Evaluate_EBMDMO_on_sim.py --EBM_path ../result/RLBench/PickUpCup/EBM_aug_frame_100_mode_6d_first_Transformer_vae_256_and_random_second_none_inf_sort/model/model_iter100000.pth --DMO_path ../result/RLBench/PickUpCup/DMO_iterative_5_frame_100_mode_6d_noise_Transformer_vae_256/model/model_iter100000.pth --tasks PickUpCup --inf_method_list DMO_keep
+python Evaluate_EBMDMO_on_sim.py --EBM_path ../result/RLBench/PickUpCup/EBM_aug_frame_100_mode_6d_first_Transformer_vae_256_and_random_second_none_inf_sort/model/model_iter50000.pth --DMO_path ../result/RLBench/PickUpCup/DMO_iterative_5_frame_100_mode_6d_noise_Transformer_vae_256/model/model_iter100000.pth --tasks PickUpCup --inf_method_list DMO_keep
 ```

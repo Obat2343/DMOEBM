@@ -21,7 +21,6 @@ parser = argparse.ArgumentParser(description='parser for image generator')
 parser.add_argument('--config_file', type=str, default='../config/RLBench_DMO.yaml', metavar='FILE', help='path to config file')
 parser.add_argument('--name', type=str, default="")
 parser.add_argument('--add_name', type=str, default="")
-parser.add_argument('--log2wandb', type=str2bool, default=True)
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--reset_dataset', type=str2bool, default=False)
 parser.add_argument('--frame', type=int, default=100)
@@ -76,11 +75,6 @@ elif rot_mode == "6d":
     rot_dim = 6
 else:
     raise ValueError("TODO")
-
-if args.log2wandb:
-    wandb.login()
-    run = wandb.init(project='IBC-{}-{}'.format(cfg.DATASET.NAME, cfg.DATASET.RLBENCH.TASK_NAME), entity='tendon',
-                    config=obj, save_code=True, name=dir_name, dir=save_dir)
 
 model_save_dir = os.path.join(save_path, "model")
 log_dir = os.path.join(save_path, 'log')
@@ -179,10 +173,6 @@ for epoch in range(10000000):
             end = time.time()
             cost = (end - start) / (iteration+1)
             print(f'Train Iter: {iteration} Cost: {cost:.4g} Loss: {loss_dict["train/loss"]:.4g} uv:{loss_dict["train/uv_loss"]:.4g}, z:{loss_dict["train/z_loss"]:.4g}, rot:{loss_dict["train/rot_loss"]:.4g}, grasp:{loss_dict["train/grasp_loss"]:.4g}')
-            
-            if args.log2wandb:
-                wandb.log(loss_dict, step=iteration)
-                wandb.log({"lr": optimizer.param_groups[0]['lr']}, step=iteration)
 
         # evaluate model
         if iteration % eval_iter == 0:
@@ -203,9 +193,6 @@ for epoch in range(10000000):
 
                 vis_img = visualize_multi_query_pos(image, [h_query, noise_query, pred_dict], train_dataset.info_dict["data_list"][0]["camera_intrinsic"], rot_mode=rot_mode)
                 vis_img.save(os.path.join(vis_dir, f"pos_img_train_{iteration}.png"))
-                
-                if args.log2wandb:
-                    wandb.log(loss_dict, step=iteration)
 
                 for data in val_dataloader:
                     model.eval()
@@ -242,9 +229,6 @@ for epoch in range(10000000):
                     vis_img.save(os.path.join(vis_dir, f"pos_img_val_{iteration}.png"))
 
                     model.train()
-            
-                if args.log2wandb:
-                    wandb.log(loss_dict, step=iteration)
 
         # save model
         if iteration % save_iter == 0:

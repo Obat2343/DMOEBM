@@ -22,7 +22,6 @@ parser = argparse.ArgumentParser(description='parser for image generator')
 parser.add_argument('--config_file', type=str, default='../config/RLBench_VAE.yaml', metavar='FILE', help='path to config file')
 parser.add_argument('--name', type=str, default="")
 parser.add_argument('--add_name', type=str, default="")
-parser.add_argument('--log2wandb', type=str2bool, default=True)
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--reset_dataset', type=str2bool, default=False)
 parser.add_argument('--frame', type=int, default=100)
@@ -94,11 +93,6 @@ for task_name in task_list:
     else:
         raise ValueError("TODO")
 
-    if args.log2wandb:
-        wandb.login()
-        run = wandb.init(project='VAE-{}-{}'.format(cfg.DATASET.NAME, cfg.DATASET.RLBENCH.TASK_NAME), entity='tendon',
-                        config=obj, save_code=True, name=dir_name, dir=save_dir)
-
     model_save_dir = os.path.join(save_path, "model")
     log_dir = os.path.join(save_path, 'log')
     vis_dir = os.path.join(save_path, 'vis')
@@ -160,10 +154,6 @@ for task_name in task_list:
                 end = time.time()
                 cost = (end - start) / (iteration+1)
                 print(f"train iter: {iteration} cost: {cost:.4g} loss: {loss.item():.4g} uv: {loss_dict['train/uv_loss']:.4g} KLD: {loss_dict['train/KLD']:.4g}")
-                
-                if args.log2wandb:
-                    wandb.log(loss_dict, step=iteration)
-                    wandb.log({"lr": optimizer.param_groups[0]['lr']}, step=iteration)
 
             if iteration % eval_iter == 0:
                 model.eval()
@@ -182,10 +172,6 @@ for task_name in task_list:
 
                 pil_img = visualize_multi_query_pos(image, [pred_dict, h_query], train_dataset.info_dict["data_list"][0]["camera_intrinsic"], rot_mode=rot_mode)
                 pil_img.save(os.path.join(vis_dir, f"pos_img_val_{iteration}.png"))
-
-                if args.log2wandb:
-                    wandb.log(loss_dict, step=iteration)
-                    wandb.log({"lr": optimizer.param_groups[0]['lr']}, step=iteration)
 
             if iteration % save_iter == 0:
                 # save model

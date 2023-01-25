@@ -7,7 +7,6 @@ import shutil
 import datetime
 
 import torch
-import wandb
 
 sys.path.append("../")
 from pycode.config import _C as cfg
@@ -36,7 +35,6 @@ if len(args.config_file) > 0:
     print('Loaded configration file {}'.format(args.config_file))
     cfg.merge_from_file(args.config_file)
 
-    # set config_file to wandb
     with open(args.config_file) as file:
         obj = yaml.safe_load(file)
 
@@ -271,7 +269,6 @@ for task_name in task_list:
 
             if iteration == max_iter + 1:
                 flag = True
-                wandb.finish()
                 break
             
             iteration += 1

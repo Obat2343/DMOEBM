@@ -3,7 +3,7 @@
 ## Checklist
 
 - [x] Upload inference code
-- [ ] Upload training code
+- [x] Upload training code
 
 ***
 
@@ -25,6 +25,7 @@ Install following apps in git directory.
 Next, Install requirements
 
 ```sh
+cd env
 pip install -r requirements.txt
 ```
 

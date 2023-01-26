@@ -1,6 +1,6 @@
 git/*
 dataset/*
-config/*
 env/*
 result/*
+!config/Test_config.yaml
 !requirements.txt
